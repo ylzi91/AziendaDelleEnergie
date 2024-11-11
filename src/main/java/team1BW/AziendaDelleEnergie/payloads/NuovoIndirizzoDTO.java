@@ -1,7 +1,6 @@
 package team1BW.AziendaDelleEnergie.payloads;
 
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
