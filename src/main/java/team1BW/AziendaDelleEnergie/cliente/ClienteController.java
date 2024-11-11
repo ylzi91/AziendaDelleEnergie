@@ -47,8 +47,9 @@ public class ClienteController {
 
     @GetMapping
     public Page<Cliente> getAllClients(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
-                                       @RequestParam(defaultValue = "id") String sortBy) {
-        return this.clienteService.findAllClient(page, size, sortBy);
+                                       @RequestParam(defaultValue = "id") String sortBy,
+                                       @RequestParam(defaultValue = "ASC") String direction) {
+        return this.clienteService.findAllClient(page, size, sortBy, direction);
     }
 
     @GetMapping("/{clienteId}")

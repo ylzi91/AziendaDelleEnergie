@@ -41,11 +41,12 @@ public class ClienteService {
 
     }
 
-    //--------------------------------------FindAllClient-----------------------------------------
-    public Page<Cliente> findAllClient(int page, int size, String sortBy) {
+    //--------------------------------------FindAllClient & Order-----------------------------------------
+    public Page<Cliente> findAllClient(int page, int size, String sortBy, String direction) {
         if (size > 100)
             size = 100;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
         return this.clienteRepository.findAll(pageable);
     }
 
