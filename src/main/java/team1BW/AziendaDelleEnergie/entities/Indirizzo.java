@@ -21,7 +21,7 @@ public class Indirizzo {
     @GeneratedValue
     private long id;
     private String via;
-    private int civico;
+    private String civico;
     private String localita;
     private int cap;
     // many Indirizzo - one Comune
@@ -29,7 +29,7 @@ public class Indirizzo {
 
 
     // costruttore personalizzato
-    public Indirizzo(int cap, int civico, String localita, String via) {
+    public Indirizzo(int cap, String civico, String localita, String via) {
         this.cap = cap;
         this.civico = civico;
         this.localita = localita;
