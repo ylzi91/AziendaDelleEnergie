@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.cliente;
+package team1BW.AziendaDelleEnergie.cliente.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
+import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
+import team1BW.AziendaDelleEnergie.cliente.exceptions.BadRequestException;
+import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
+import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
 
 @RestController
 @RequestMapping("/clienti")

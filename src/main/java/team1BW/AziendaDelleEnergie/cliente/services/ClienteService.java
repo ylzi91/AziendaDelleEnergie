@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.cliente;
+package team1BW.AziendaDelleEnergie.cliente.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -6,8 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
-import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
+import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
+import team1BW.AziendaDelleEnergie.cliente.exceptions.BadRequestException;
+import team1BW.AziendaDelleEnergie.cliente.exceptions.NotFoundException;
+import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
+import team1BW.AziendaDelleEnergie.cliente.repositories.ClienteRepository;
 
 @Service
 public class ClienteService {

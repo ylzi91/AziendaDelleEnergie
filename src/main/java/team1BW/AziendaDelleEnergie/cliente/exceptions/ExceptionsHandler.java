@@ -1,10 +1,11 @@
-package team1BW.AziendaDelleEnergie.exceptions;
+package team1BW.AziendaDelleEnergie.cliente.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import team1BW.AziendaDelleEnergie.cliente.payloads.ErrorsResponseDTO;
 
 import java.time.LocalDateTime;
 

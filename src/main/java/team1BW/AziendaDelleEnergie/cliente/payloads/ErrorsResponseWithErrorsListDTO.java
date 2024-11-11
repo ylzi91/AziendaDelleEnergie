@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.exceptions;
+package team1BW.AziendaDelleEnergie.cliente.payloads;
 
 import java.time.LocalDateTime;
 import java.util.Map;

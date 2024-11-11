@@ -1,6 +1,7 @@
-package team1BW.AziendaDelleEnergie.cliente;
+package team1BW.AziendaDelleEnergie.cliente.payloads;
 
 import jakarta.validation.constraints.*;
+import team1BW.AziendaDelleEnergie.cliente.enums.TipoCliente;
 
 import java.time.LocalDate;
 

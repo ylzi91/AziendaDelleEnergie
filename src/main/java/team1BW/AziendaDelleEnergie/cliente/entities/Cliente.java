@@ -1,10 +1,11 @@
-package team1BW.AziendaDelleEnergie.cliente;
+package team1BW.AziendaDelleEnergie.cliente.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import team1BW.AziendaDelleEnergie.cliente.enums.TipoCliente;
 
 import java.time.LocalDate;
 
