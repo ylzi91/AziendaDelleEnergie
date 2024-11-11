@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.exceptions;
+package team1BW.AziendaDelleEnergie.indirizzi.exceptions;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

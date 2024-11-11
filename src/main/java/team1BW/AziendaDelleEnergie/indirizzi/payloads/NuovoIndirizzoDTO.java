@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.payloads;
+package team1BW.AziendaDelleEnergie.indirizzi.payloads;
 
 
 import jakarta.validation.constraints.NotEmpty;

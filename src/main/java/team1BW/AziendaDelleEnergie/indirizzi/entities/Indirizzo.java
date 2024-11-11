@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.entities;
+package team1BW.AziendaDelleEnergie.indirizzi.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

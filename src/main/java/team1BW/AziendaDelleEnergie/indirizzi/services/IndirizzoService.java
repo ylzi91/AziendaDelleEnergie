@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.services;
+package team1BW.AziendaDelleEnergie.indirizzi.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -6,10 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import team1BW.AziendaDelleEnergie.entities.Indirizzo;
-import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
-import team1BW.AziendaDelleEnergie.payloads.NuovoIndirizzoDTO;
-import team1BW.AziendaDelleEnergie.repositories.IndirizzoRepository;
+import team1BW.AziendaDelleEnergie.indirizzi.entities.Indirizzo;
+import team1BW.AziendaDelleEnergie.indirizzi.exceptions.NotFoundException;
+import team1BW.AziendaDelleEnergie.indirizzi.payloads.NuovoIndirizzoDTO;
+import team1BW.AziendaDelleEnergie.indirizzi.repositories.IndirizzoRepository;
 
 @Service
 public class IndirizzoService {
