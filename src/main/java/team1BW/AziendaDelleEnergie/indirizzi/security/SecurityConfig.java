@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.security;
+package team1BW.AziendaDelleEnergie.indirizzi.security;
 
 
 import org.springframework.context.annotation.Bean;
