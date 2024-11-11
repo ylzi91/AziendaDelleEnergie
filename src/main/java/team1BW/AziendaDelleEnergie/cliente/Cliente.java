@@ -18,6 +18,7 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private String nomeCliente;
     private String ragioneSociale;
     private String partitaIva;
     private String email;
@@ -34,11 +35,12 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private TipoCliente tipoCliente;
 
-    public Cliente(String ragioneSociale, String partitaIva, String email,
+    public Cliente(String nomeCliente, String ragioneSociale, String partitaIva, String email,
                    LocalDate dataInserimento, LocalDate dataUltimoContatto, double fatturatoAnnuale,
                    String pec, String telefono, String emailContatto, String nomeContatto,
                    String cognomeContatto, String telefonoContatto, String logoAziendale,
                    TipoCliente tipoCliente) {
+        this.nomeCliente = nomeCliente;
         this.ragioneSociale = ragioneSociale;
         this.partitaIva = partitaIva;
         this.email = email;

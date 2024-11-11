@@ -5,6 +5,10 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public record NewClienteDTO(
+        @NotEmpty(message = "Il nome cliente è obbligatorio!")
+        @Size(min = 2, max = 100, message = "Il nome cliente deve essere compresa tra 2 e 100 caratteri!")
+        String nomeCliente,
+
         @NotEmpty(message = "La ragione sociale è obbligatoria!")
         @Size(min = 2, max = 100, message = "La ragione sociale deve essere compresa tra 2 e 100 caratteri!")
         String ragioneSociale,
