@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
-import team1BW.AziendaDelleEnergie.cliente.exceptions.BadRequestException;
-import team1BW.AziendaDelleEnergie.cliente.exceptions.NotFoundException;
 import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.repositories.ClienteRepository;
+import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
+import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 
 @Service
 public class ClienteService {
