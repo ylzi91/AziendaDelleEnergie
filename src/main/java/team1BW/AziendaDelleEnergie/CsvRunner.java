@@ -15,7 +15,7 @@ public class CsvRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        provinciaService.saveAllProvincie("src/main/java/team1BW/AziendaDelleEnergie/files/province-italiane.csv");
-        comuneService.saveAllComuni("src/main/java/team1BW/AziendaDelleEnergie/files/comuni-italiani.csv");
+        // provinciaService.saveAllProvincie("src/main/java/team1BW/AziendaDelleEnergie/files/province-italiane.csv");
+        //  comuneService.saveAllComuni("src/main/java/team1BW/AziendaDelleEnergie/files/comuni-italiani.csv");
     }
 }

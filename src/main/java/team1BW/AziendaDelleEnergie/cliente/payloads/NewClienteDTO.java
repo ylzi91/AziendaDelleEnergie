@@ -22,9 +22,6 @@ public record NewClienteDTO(
         @Email(message = "L'email inserita non è valida!")
         String email,
 
-        @NotNull(message = "La data di inserimento è obbligatoria!")
-        LocalDate dataInserimento,
-
         @PositiveOrZero(message = "Inserire un numero positivo o zero!")
         double fatturatoAnnuale,
 
@@ -53,6 +50,8 @@ public record NewClienteDTO(
         String logoAziendale,
 
         @NotNull(message = "Inserire un tipo cliente!")
-        TipoCliente tipoCliente
+        TipoCliente tipoCliente,
+
+        LocalDate dataUltimoContatto
 ) {
 }

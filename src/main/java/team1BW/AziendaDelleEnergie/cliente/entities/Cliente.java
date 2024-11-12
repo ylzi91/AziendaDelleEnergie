@@ -1,10 +1,7 @@
 package team1BW.AziendaDelleEnergie.cliente.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import team1BW.AziendaDelleEnergie.cliente.enums.TipoCliente;
 
 import java.time.LocalDate;
@@ -18,6 +15,7 @@ import java.time.LocalDate;
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private long id;
     private String nomeCliente;
     private String ragioneSociale;

@@ -13,6 +13,9 @@ import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/clienti")
 public class ClienteController {
@@ -58,6 +61,17 @@ public class ClienteController {
     @GetMapping("/{clienteId}")
     public Cliente findById(@PathVariable Long clienteId) {
         return this.clienteService.findClientById(clienteId);
+    }
+
+//----------------------------------Filtro---------------------------
+
+    @GetMapping("filterclients")
+    public List<Cliente> filtro(
+            @RequestParam(required = false) Double fatturatoAnnuale,
+            @RequestParam(required = false) LocalDate dataInserimento,
+            @RequestParam(required = false) LocalDate dataUltimoContatto,
+            @RequestParam(required = false) String nomeCliente) {
+        return clienteService.filterClients(fatturatoAnnuale, dataInserimento, dataUltimoContatto, nomeCliente);
     }
 
 

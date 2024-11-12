@@ -12,6 +12,10 @@ import team1BW.AziendaDelleEnergie.cliente.repositories.ClienteRepository;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class ClienteService {
 
@@ -34,8 +38,8 @@ public class ClienteService {
         });
         Cliente newCliente = new Cliente(
                 body.nomeCliente(),
-                body.ragioneSociale(), body.partitaIva(), body.email(),
-                body.dataInserimento(), null, body.fatturatoAnnuale(), body.pec(),
+                body.ragioneSociale(), body.partitaIva(), body.email(), LocalDate.now(),
+                body.dataUltimoContatto(), body.fatturatoAnnuale(), body.pec(),
                 body.telefono(), body.emailContatto(), body.nomeContatto(), body.cognomeContatto(),
                 body.telefonoContatto(), body.logoAziendale(), body.tipoCliente()
         );
@@ -57,6 +61,7 @@ public class ClienteService {
     public Cliente findClientById(Long clienteId) {
         return this.clienteRepository.findById(clienteId).orElseThrow(() -> new NotFoundException(clienteId));
     }
+
 
     //------------------------------------findClientByIdAndUpdate-----------------------------------------
     public Cliente findClientByIdAndUpdate(Long clienteId, NewClienteDTO body) {
@@ -89,7 +94,6 @@ public class ClienteService {
         clienteFound.setRagioneSociale(body.ragioneSociale());
         clienteFound.setPartitaIva(body.partitaIva());
         clienteFound.setEmail(body.email());
-        clienteFound.setDataInserimento(body.dataInserimento());
         clienteFound.setFatturatoAnnuale(body.fatturatoAnnuale());
         clienteFound.setPec(body.pec());
         clienteFound.setTelefono(body.telefono());
@@ -100,6 +104,11 @@ public class ClienteService {
         clienteFound.setLogoAziendale(body.logoAziendale());
         clienteFound.setTipoCliente(body.tipoCliente());
 
+        //aggiorno la data dell'ultimo contatto solo se la fornisco
+
+        if (body.dataUltimoContatto() != null) {
+            clienteFound.setDataUltimoContatto(body.dataUltimoContatto());
+        }
         return this.clienteRepository.save(clienteFound);
     }
 
@@ -110,5 +119,24 @@ public class ClienteService {
     }
 
     //------------------------------------filterClients------------------------------------------------
+    public List<Cliente> filterClients(Double fatturatoAnnuale, LocalDate dataInserimento,
+                                       LocalDate dataUltimoContatto, String nomeCliente) {
+        List<Cliente> clienti = clienteRepository.filtroClienti(
+                fatturatoAnnuale, dataInserimento, dataUltimoContatto, nomeCliente);
+
+        if (clienti.isEmpty()) {
+            List<String> criterifiltro = new ArrayList<>();
+            if (fatturatoAnnuale != null) criterifiltro.add("fatturato annuale: " + fatturatoAnnuale);
+            if (dataInserimento != null) criterifiltro.add("data di inserimento: " + dataInserimento);
+            if (dataUltimoContatto != null) criterifiltro.add("data dell'ultimo contatto: " + dataUltimoContatto);
+            if (nomeCliente != null) criterifiltro.add("nome cliente: '" + nomeCliente + "'");
+
+            String messaggioErrore = "Nessun cliente trovato con questi criteri di ricerca: " + String.join(", ", criterifiltro) + ".";
+            throw new NotFoundException(messaggioErrore);
+        }
+
+        return clienti;
+    }
 
 }
+
