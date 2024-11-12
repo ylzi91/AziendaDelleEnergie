@@ -43,7 +43,7 @@ public class Cliente {
                    LocalDate dataInserimento, LocalDate dataUltimoContatto, double fatturatoAnnuale,
                    String pec, String telefono, String emailContatto, String nomeContatto,
                    String cognomeContatto, String telefonoContatto, String logoAziendale,
-                   TipoCliente tipoCliente, Indirizzo indirizzoSedeLegale) {
+                   TipoCliente tipoCliente, Indirizzo indirizzoSedeLegale, Indirizzo indirizzoSedeOperativa) {
         this.nomeCliente = nomeCliente;
         this.ragioneSociale = ragioneSociale;
         this.partitaIva = partitaIva;
@@ -60,5 +60,6 @@ public class Cliente {
         this.logoAziendale = logoAziendale;
         this.tipoCliente = tipoCliente;
         this.indirizzoSedeLegale = indirizzoSedeLegale;
+        this.indirizzoSedeOperativa = indirizzoSedeOperativa;
     }
 }

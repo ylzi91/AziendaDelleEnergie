@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
 import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.repositories.ClienteRepository;
@@ -45,13 +46,37 @@ public class ClienteService {
             throw new BadRequestException("Email Contatto " + body.emailContatto() + " già in uso! Inserire un'altra email contatto!");
         });
 
-        NuovoIndirizzoDTO nuovoIndirizzoDTO = new NuovoIndirizzoDTO(body.via(), body.civico(), body.localita(), body.cap(), body.nomeComune());
+        NuovoIndirizzoDTO indirizzoLegale;
+        NuovoIndirizzoDTO indirizzoOperativo;
+        BindingResult validationResult;
+        if(body.via() == null || body.civico() == null || body.localita() == null || body.cap() == null || body.nomeComune() == null)
+            indirizzoLegale = null;
+        else
+            indirizzoLegale = new NuovoIndirizzoDTO(body.via(), body.civico(), body.localita(), body.cap(), body.nomeComune());
+
+        if(body.viaOp() == null || body.civicoOp() == null || body.localitaOp() == null || body.capOp() == null || body.nomeComuneOp() == null)
+            indirizzoOperativo = null;
+        else
+            indirizzoOperativo = new NuovoIndirizzoDTO(body.viaOp(), body.civicoOp(), body.localitaOp(), body.capOp(), body.nomeComuneOp());
+
         Cliente newCliente = new Cliente(
                 body.nomeCliente(),
-                body.ragioneSociale(), body.partitaIva(), body.email(), LocalDate.now(),
-                body.dataUltimoContatto(), body.fatturatoAnnuale(), body.pec(),
-                body.telefono(), body.emailContatto(), body.nomeContatto(), body.cognomeContatto(),
-                body.telefonoContatto(), body.logoAziendale(), body.tipoCliente(), indirizzoService.save(nuovoIndirizzoDTO)
+                body.ragioneSociale(),
+                body.partitaIva(),
+                body.email(),
+                LocalDate.now(),
+                body.dataUltimoContatto(),
+                body.fatturatoAnnuale(),
+                body.pec(),
+                body.telefono(),
+                body.emailContatto(),
+                body.nomeContatto(),
+                body.cognomeContatto(),
+                body.telefonoContatto(),
+                body.logoAziendale(),
+                body.tipoCliente(),
+                indirizzoLegale == null ? null : indirizzoService.save(indirizzoLegale),
+                indirizzoOperativo == null ? null : indirizzoService.save(indirizzoOperativo)
         );
         return this.clienteRepository.save(newCliente);
 

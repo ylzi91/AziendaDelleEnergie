@@ -20,9 +20,9 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     //filtro clienti
     @Query("SELECT c FROM Cliente c WHERE " +
-            "(:fatturatoAnnuale IS NULL OR c.fatturatoAnnuale = :fatturatoAnnuale) AND" +
+            "(:fatturatoAnnuale IS NULL OR c.fatturatoAnnuale = :fatturatoAnnuale) AND " +
             "(:dataInserimento IS NULL OR c.dataInserimento = :dataInserimento) AND " +
-            "(:dataUltimoContatto IS NULL OR c.dataUltimoContatto = :dataUltimoContatto) AND" +
+            "(:dataUltimoContatto IS NULL OR c.dataUltimoContatto = :dataUltimoContatto) AND " +
             "(:nomeCliente IS NULL OR LOWER(c.nomeCliente) LIKE LOWER (CONCAT('%', :nomeCliente, '%')))")
     List<Cliente> filtroClienti(
             @Param("fatturatoAnnuale") Double fatturatoAnnuale,

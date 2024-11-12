@@ -16,6 +16,7 @@ import team1BW.AziendaDelleEnergie.indirizzi.payloads.NuovoIndirizzoDTO;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clienti")
@@ -28,7 +29,11 @@ public class ClienteController {
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente saveCliente(@Valid @RequestBody NewClienteDTO newClienteDTO) {
+    public Cliente saveCliente( @RequestBody @Validated NewClienteDTO newClienteDTO, BindingResult validationResult) {
+        if(validationResult.hasErrors()){
+            String message = validationResult.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage()).collect(Collectors.joining(". "));
+            throw new BadRequestException(message);
+        }
         return clienteService.saveClient(newClienteDTO);
     }
 
