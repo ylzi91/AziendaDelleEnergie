@@ -33,15 +33,15 @@ public class CSVServiceComune {
             MappingIterator<ComuneCSV> it = mapper.readerFor(ComuneCSV.class).with(inputSchema).readValues(file);
             List<ComuneCSV> rows = it.readAll();
 
+            provinciaService.findByProvinciaAndUpdate("Verbania", "Verbano-Cusio-Ossola");
+            provinciaService.findByProvinciaAndUpdate("Aosta", "Valle d'Aosta/Vallée d'Aoste");
+            provinciaService.findByProvinciaAndUpdate("Carbonia Iglesias", "Sud Sardegna");
+            provinciaService.findByProvinciaAndDelete("Medio Campidano");
+
             for (ComuneCSV row : rows) {
                 System.out.println("Riga letta: " + row.getDenominazione() + ", " + row.getNomeProvincia());
                 String nomeProvincia = row.getNomeProvincia();
-                if(nomeProvincia.equals("Verbano-Cusio-Ossola")){
-                    nomeProvincia = "Verbania";
-                }
-                if(nomeProvincia.equals("Valle d'Aosta/Vallée d'Aoste")){
-                    nomeProvincia = "Aosta";
-                }
+
                 if(nomeProvincia.equals("Monza e della Brianza")){
                     nomeProvincia = "Monza-Brianza";
                 }
@@ -68,9 +68,6 @@ public class CSVServiceComune {
                 }
                 if(nomeProvincia.equals("Vibo Valentia")){
                     nomeProvincia = "Vibo-Valentia";
-                }
-                if(nomeProvincia.equals("Sud Sardegna")){
-                    provinciaService.saveProvincia(new Provincia("Sud Sardegna", "SU", "Sardegna"));
                 }
                 Provincia foundProvincia = provinciaService.findByProvincia(nomeProvincia);
                 comuni.add(new Comune(row.getDenominazione(), foundProvincia));
