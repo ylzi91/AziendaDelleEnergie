@@ -1,5 +1,4 @@
-package team1BW.AziendaDelleEnergie.indirizzi.security;
-
+package team1BW.AziendaDelleEnergie.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.disable());
 
@@ -26,14 +26,16 @@ public class SecurityConfig {
         httpSecurity.sessionManagement(httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+
         httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry.requestMatchers("/**").permitAll());
+
 
         return httpSecurity.build();
     }
 
     @Bean
-    PasswordEncoder getBCrypt(){
+    PasswordEncoder getBCrypt() {
         return new BCryptPasswordEncoder(12);
     }
 }

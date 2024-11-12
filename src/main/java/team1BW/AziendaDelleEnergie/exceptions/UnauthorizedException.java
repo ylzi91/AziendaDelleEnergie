@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.cliente.exceptions;
+package team1BW.AziendaDelleEnergie.exceptions;
 
 public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException(String message) {

@@ -9,9 +9,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
-import team1BW.AziendaDelleEnergie.cliente.exceptions.BadRequestException;
 import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
+import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 
 @RestController
 @RequestMapping("/clienti")

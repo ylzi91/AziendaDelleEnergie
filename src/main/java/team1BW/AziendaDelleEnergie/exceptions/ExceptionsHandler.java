@@ -1,4 +1,4 @@
-package team1BW.AziendaDelleEnergie.cliente.exceptions;
+package team1BW.AziendaDelleEnergie.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
