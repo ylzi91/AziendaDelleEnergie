@@ -17,6 +17,9 @@ public record CreateFatturaDTO(
         Long numeroFattura,
 
         @NotNull(message = "Lo stato della fattura è obbligatorio")
-        StatoFattura stato
+        StatoFattura stato,
+
+        String pIva
+
 ) {
 }

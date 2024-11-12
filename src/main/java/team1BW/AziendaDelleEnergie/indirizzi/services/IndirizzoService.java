@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import team1BW.AziendaDelleEnergie.comuni.Comune;
+import team1BW.AziendaDelleEnergie.comuni.ComuneService;
 import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 import team1BW.AziendaDelleEnergie.indirizzi.entities.Indirizzo;
 import team1BW.AziendaDelleEnergie.indirizzi.payloads.NuovoIndirizzoDTO;
@@ -15,6 +17,8 @@ import team1BW.AziendaDelleEnergie.indirizzi.repositories.IndirizzoRepository;
 public class IndirizzoService {
     @Autowired
     private IndirizzoRepository indirizzoRepository;
+    @Autowired
+    private ComuneService comuneService;
 
     //@Autowired
     //private PasswordEncoder bcrypt;
@@ -22,7 +26,8 @@ public class IndirizzoService {
 
     // SAVE NUOVO INDIRIZZO
     public Indirizzo save(NuovoIndirizzoDTO body) {
-        Indirizzo newIndirizzo = new Indirizzo(body.cap(), body.civico(), body.localita(), body.via());
+        Comune foundComune = comuneService.trovaComune(body.nomeComune());
+        Indirizzo newIndirizzo = new Indirizzo(body.cap(), body.civico(), body.localita(), body.via(), foundComune);
         return this.indirizzoRepository.save(newIndirizzo);
     }
 

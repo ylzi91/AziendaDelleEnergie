@@ -52,6 +52,13 @@ public record NewClienteDTO(
         @NotNull(message = "Inserire un tipo cliente!")
         TipoCliente tipoCliente,
 
-        LocalDate dataUltimoContatto
+        LocalDate dataUltimoContatto,
+
+        @NotNull(message = "Inserire indirizzo")
+        String via,
+        Integer cap,
+        String civico,
+        String localita,
+        String nomeComune
 ) {
 }

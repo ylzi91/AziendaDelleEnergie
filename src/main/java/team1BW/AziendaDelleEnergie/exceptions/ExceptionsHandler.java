@@ -1,5 +1,6 @@
 package team1BW.AziendaDelleEnergie.exceptions;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,5 +42,12 @@ public class ExceptionsHandler {
     public ErrorsResponseDTO handleGeneric(Exception ex) {
         ex.printStackTrace();
         return new ErrorsResponseDTO("Problema lato server!", LocalDateTime.now());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 500
+    public ErrorsResponseDTO handleGeneric(DataIntegrityViolationException ex) {
+        ex.printStackTrace();
+        return new ErrorsResponseDTO(ex.getMessage(), LocalDateTime.now());
     }
 }
