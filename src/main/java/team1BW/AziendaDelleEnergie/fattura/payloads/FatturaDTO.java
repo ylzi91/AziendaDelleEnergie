@@ -10,6 +10,5 @@ public record FatturaDTO(
         double importo,
         Long numeroFattura,
         StatoFattura stato
-        // aggiungere l id del cliente cosi da farlo spuntare quando si vorra visualizzare una fattura
 ) {
 }
