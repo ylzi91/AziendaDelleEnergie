@@ -12,7 +12,6 @@ import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
 import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
-import team1BW.AziendaDelleEnergie.indirizzi.payloads.NuovoIndirizzoDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,7 +52,8 @@ public class ClienteController {
     //-----------------------------UTENTE----------------------------------------
 
     @GetMapping
-    public Page<Cliente> getAllClients(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
+    public Page<Cliente> getAllClients(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size,
                                        @RequestParam(defaultValue = "id") String sortBy,
                                        @RequestParam(defaultValue = "ASC") String direction) {
         return this.clienteService.findAllClient(page, size, sortBy, direction);

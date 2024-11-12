@@ -18,6 +18,7 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private long id;
+    @Column(name = "nome_cliente")
     private String nomeCliente;
     private String ragioneSociale;
     private String partitaIva;
