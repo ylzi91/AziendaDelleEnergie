@@ -1,47 +1,45 @@
 package team1BW.AziendaDelleEnergie.utente.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import team1BW.AziendaDelleEnergie.utente.payloads.UtenteCreateDTO;
+import team1BW.AziendaDelleEnergie.utente.entities.Utente;
 import team1BW.AziendaDelleEnergie.utente.payloads.UtenteDTO;
-import team1BW.AziendaDelleEnergie.utente.payloads.UtenteResponseDTO;
 import team1BW.AziendaDelleEnergie.utente.services.UtenteService;
 
 @RestController
 @RequestMapping("/utenti")
 public class UtenteController {
 
-    private final UtenteService utenteService;
+    @Autowired
+    private UtenteService utenteService;
 
-    public UtenteController(UtenteService utenteService) {
-        this.utenteService = utenteService;
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Page<Utente> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
+                                @RequestParam(defaultValue = "id") String sortBy) {
+        return this.utenteService.findAll(page, size, sortBy);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UtenteCreateDTO utenteCreateDTO) {
-        utenteService.registerUser(utenteCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Utente registrato con successo");
+    @GetMapping("/me")
+    public Utente getProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
+        return currentAuthenticatedUser;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UtenteResponseDTO> getUserById(@PathVariable Long id) {
-        UtenteResponseDTO user = utenteService.getUserById(id);
-        return ResponseEntity.ok(user);
+    @PutMapping("/me")
+    public Utente updateProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser, @RequestBody @Validated UtenteDTO body) {
+        return this.utenteService.findByIdAndUpdate(currentAuthenticatedUser.getId(), body);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<UtenteResponseDTO> updateUser(@PathVariable Long id, @RequestBody UtenteDTO utenteDTO) {
-        UtenteResponseDTO updatedUser = utenteService.updateUser(id, utenteDTO);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        utenteService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/me")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
+        this.utenteService.findByIdAndDelete(currentAuthenticatedUser.getId());
     }
 }

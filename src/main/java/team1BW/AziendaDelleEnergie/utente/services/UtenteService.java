@@ -1,101 +1,94 @@
 package team1BW.AziendaDelleEnergie.utente.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
+import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 import team1BW.AziendaDelleEnergie.utente.entities.Utente;
-import team1BW.AziendaDelleEnergie.utente.exceptions.UserNotFoundException;
-import team1BW.AziendaDelleEnergie.utente.payloads.UtenteCreateDTO;
 import team1BW.AziendaDelleEnergie.utente.payloads.UtenteDTO;
-import team1BW.AziendaDelleEnergie.utente.payloads.UtenteResponseDTO;
 import team1BW.AziendaDelleEnergie.utente.repositories.UtenteRepository;
 
 @Service
 public class UtenteService {
 
-    private final UtenteRepository utenteRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private UtenteRepository utenteRepository;
 
     @Autowired
-    public UtenteService(UtenteRepository utenteRepository, PasswordEncoder passwordEncoder) {
-        this.utenteRepository = utenteRepository;
-        this.passwordEncoder = passwordEncoder;
+    private PasswordEncoder bcrypt;
+
+    //-------------------------------------save utente -----------------------------------
+    public Utente saveUtente(UtenteDTO body) {
+        this.utenteRepository.findByEmail(body.email()).ifPresent(
+                utente -> {
+                    throw new BadRequestException("Email " + body.email() + " già in uso!");
+                }
+        );
+
+        this.utenteRepository.findByUsername(body.username()).ifPresent(utente -> {
+            throw new BadRequestException("Username " + body.username() + " già in uso!");
+        });
+        Utente newUtente = new Utente(body.nome(), body.cognome(), body.username(), body.email(), bcrypt.encode(body.password()),
+                "https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome());
+        return this.utenteRepository.save(newUtente);
+
     }
 
-    @Transactional
-    public UtenteResponseDTO registerUser(UtenteCreateDTO utenteCreateDTO) {
-        if (utenteRepository.findByEmail(utenteCreateDTO.email()).isPresent()) {
-            throw new IllegalArgumentException("Email già in uso");
+    //-----------------------------------------find all utenti ---------------------------------
+    public Page<Utente> findAll(int page, int size, String sortBy) {
+        if (size > 100)
+            size = 100;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.utenteRepository.findAll(pageable);
+    }
+
+    //------------------------------------- findByID utenti--------------------------------------
+    public Utente findById(Long utenteId) {
+        return this.utenteRepository.findById(utenteId).orElseThrow(() -> new NotFoundException(utenteId));
+    }
+
+    //-------------------------------------findByiD utende and Update ----------------
+    public Utente findByIdAndUpdate(Long utenteId, UtenteDTO body) {
+        Utente foundUtente = this.findById(utenteId);
+        if (!foundUtente.getEmail().equals(body.email())) {
+            this.utenteRepository.findByEmail(body.email()).ifPresent(
+                    utente -> {
+                        throw new BadRequestException("Email " + body.email() + " già in uso!");
+                    }
+            );
         }
 
-        if (utenteRepository.findByUsername(utenteCreateDTO.username()).isPresent()) {
-            throw new IllegalArgumentException("Username già in uso");
+        if (!foundUtente.getUsername().equals(body.username())) {
+            this.utenteRepository.findByUsername(body.username()).ifPresent(
+                    utente -> {
+                        throw new BadRequestException("Username " + body.username() + " già in uso!");
+                    }
+            );
         }
 
-        Utente utente = new Utente();
-        utente.setNomeUtente(utenteCreateDTO.nome());
-        utente.setCognomeUtente(utenteCreateDTO.cognome());
-        utente.setUsername(utenteCreateDTO.username());
-        utente.setEmail(utenteCreateDTO.email());
-        utente.setPassword(passwordEncoder.encode(utenteCreateDTO.password()));
-        utente.setAvatar(utenteCreateDTO.avatar());
-        utente.setRuolo(utenteCreateDTO.ruolo());
+        foundUtente.setNomeUtente(body.nome());
+        foundUtente.setCognomeUtente(body.cognome());
+        foundUtente.setEmail(body.email());
+        foundUtente.setPassword(bcrypt.encode(body.password()));
+        foundUtente.setAvatar("https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome());
 
-        Utente savedUser = utenteRepository.save(utente);
-
-        return new UtenteResponseDTO(
-                savedUser.getId(),
-                savedUser.getNomeUtente(),
-                savedUser.getCognomeUtente(),
-                savedUser.getUsername(),
-                savedUser.getEmail(),
-                savedUser.getAvatar()
-        );
+        return this.utenteRepository.save(foundUtente);
     }
 
-    public UtenteResponseDTO getUserById(Long id) {
-        Utente utente = utenteRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Utente con ID " + id + " non trovato"));
-
-        return new UtenteResponseDTO(
-                utente.getId(),
-                utente.getNomeUtente(),
-                utente.getCognomeUtente(),
-                utente.getUsername(),
-                utente.getEmail(),
-                utente.getAvatar()
-        );
+    //------------------------------------------delete utente ------------------------
+    public void findByIdAndDelete(Long utenteId) {
+        Utente foundUtente = this.findById(utenteId);
+        this.utenteRepository.delete(foundUtente);
     }
 
-    @Transactional
-    public UtenteResponseDTO updateUser(Long id, UtenteDTO utenteDTO) {
-        Utente utente = utenteRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Utente non trovato"));
-
-        utente.setNomeUtente(utenteDTO.nome());
-        utente.setCognomeUtente(utenteDTO.cognome());
-        utente.setUsername(utenteDTO.username());
-        utente.setEmail(utenteDTO.email());
-        utente.setAvatar(utenteDTO.avatar());
-        if (utenteDTO.password() != null && !utenteDTO.password().isEmpty()) {
-            utente.setPassword(passwordEncoder.encode(utenteDTO.password()));
-        }
-
-        Utente updatedUtente = utenteRepository.save(utente);
-        return new UtenteResponseDTO(
-                updatedUtente.getId(),
-                updatedUtente.getNomeUtente(),
-                updatedUtente.getCognomeUtente(),
-                updatedUtente.getUsername(),
-                updatedUtente.getEmail(),
-                updatedUtente.getAvatar()
-        );
-    }
-
-    public void deleteUser(Long id) {
-        Utente utente = utenteRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Utente con ID " + id + " non trovato"));
-        utenteRepository.delete(utente);
+    //------------------------------------find utente by username -----------------------
+    public Utente findByUsername(String username) {
+        return this.utenteRepository.findByUsername(username).orElseThrow(() ->
+                new NotFoundException("L'utente con lo username: " + username + " non è stato trovato"));
     }
 }
