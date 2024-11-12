@@ -9,11 +9,19 @@ import org.springframework.stereotype.Service;
 import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
 import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.repositories.ClienteRepository;
+import team1BW.AziendaDelleEnergie.comuni.ComuneService;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
+import team1BW.AziendaDelleEnergie.indirizzi.entities.Indirizzo;
+import team1BW.AziendaDelleEnergie.indirizzi.payloads.NuovoIndirizzoDTO;
+import team1BW.AziendaDelleEnergie.indirizzi.services.IndirizzoService;
 
 @Service
 public class ClienteService {
+    @Autowired
+    IndirizzoService indirizzoService;
+    @Autowired
+    ComuneService comuneService;
 
     @Autowired
     private ClienteRepository clienteRepository;
@@ -32,12 +40,14 @@ public class ClienteService {
         this.clienteRepository.findByEmailContatto(body.emailContatto()).ifPresent(cliente -> {
             throw new BadRequestException("Email Contatto " + body.emailContatto() + " già in uso! Inserire un'altra email contatto!");
         });
+
+        NuovoIndirizzoDTO nuovoIndirizzoDTO = new NuovoIndirizzoDTO(body.via(), body.civico(), body.localita(), body.cap(), body.nomeComune());
         Cliente newCliente = new Cliente(
                 body.nomeCliente(),
                 body.ragioneSociale(), body.partitaIva(), body.email(),
                 body.dataInserimento(), null, body.fatturatoAnnuale(), body.pec(),
                 body.telefono(), body.emailContatto(), body.nomeContatto(), body.cognomeContatto(),
-                body.telefonoContatto(), body.logoAziendale(), body.tipoCliente()
+                body.telefonoContatto(), body.logoAziendale(), body.tipoCliente(), indirizzoService.save(nuovoIndirizzoDTO)
         );
         return this.clienteRepository.save(newCliente);
 
@@ -110,5 +120,10 @@ public class ClienteService {
     }
 
     //------------------------------------filterClients------------------------------------------------
+
+    public Cliente searchByPIva(String pIva){
+        Cliente found = clienteRepository.findByPartitaIva(pIva).orElseThrow(() -> new NotFoundException("Paritita iva numero: " + pIva + " non trovata"));
+        return found;
+    }
 
 }

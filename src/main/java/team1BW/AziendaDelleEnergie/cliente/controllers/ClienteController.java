@@ -12,6 +12,7 @@ import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
 import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
+import team1BW.AziendaDelleEnergie.indirizzi.payloads.NuovoIndirizzoDTO;
 
 @RestController
 @RequestMapping("/clienti")

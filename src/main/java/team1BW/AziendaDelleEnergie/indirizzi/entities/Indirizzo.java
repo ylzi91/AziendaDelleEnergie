@@ -1,13 +1,11 @@
 package team1BW.AziendaDelleEnergie.indirizzi.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import team1BW.AziendaDelleEnergie.comuni.Comune;
 
 
 @Entity
@@ -24,16 +22,18 @@ public class Indirizzo {
     private String civico;
     private String localita;
     private int cap;
-    // many Indirizzo - one Comune
+    @ManyToOne
+    private Comune comune;
 
 
 
     // costruttore personalizzato
-    public Indirizzo(int cap, String civico, String localita, String via) {
+    public Indirizzo(int cap, String civico, String localita, String via, Comune comune) {
         this.cap = cap;
         this.civico = civico;
         this.localita = localita;
         this.via = via;
+        this.comune = comune;
     }
 
 }

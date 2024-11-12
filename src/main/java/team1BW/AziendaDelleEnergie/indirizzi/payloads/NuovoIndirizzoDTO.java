@@ -16,6 +16,10 @@ public record NuovoIndirizzoDTO(@NotEmpty(message = "Il nome della via è obblig
                                 String localita,
                                 @NotEmpty(message = "Il CAP è obbligatorio!")
                                 @Size(min = 5, max = 5, message = "Il CAP deve essere di 5 cifre")
-                                int cap) {
+                                int cap,
+                                @NotEmpty(message = "Il comune è obbligatorio")
+                                String nomeComune
+
+) {
                                 // CAP 45100
 }

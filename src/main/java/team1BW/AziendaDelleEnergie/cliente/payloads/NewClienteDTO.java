@@ -2,6 +2,8 @@ package team1BW.AziendaDelleEnergie.cliente.payloads;
 
 import jakarta.validation.constraints.*;
 import team1BW.AziendaDelleEnergie.cliente.enums.TipoCliente;
+import team1BW.AziendaDelleEnergie.indirizzi.entities.Indirizzo;
+import team1BW.AziendaDelleEnergie.indirizzi.payloads.NuovoIndirizzoDTO;
 
 import java.time.LocalDate;
 
@@ -53,6 +55,13 @@ public record NewClienteDTO(
         String logoAziendale,
 
         @NotNull(message = "Inserire un tipo cliente!")
-        TipoCliente tipoCliente
+        TipoCliente tipoCliente,
+
+        @NotNull(message = "Inserire indirizzo")
+        String via,
+        Integer cap,
+        String civico,
+        String localita,
+        String nomeComune
 ) {
 }

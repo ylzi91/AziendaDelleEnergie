@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
+import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 import team1BW.AziendaDelleEnergie.fattura.entities.Fattura;
 import team1BW.AziendaDelleEnergie.fattura.payloads.CreateFatturaDTO;
 import team1BW.AziendaDelleEnergie.fattura.repositories.FatturaRepository;
@@ -15,6 +17,8 @@ public class FatturaService {
 
     @Autowired
     private FatturaRepository fatturaRepository;
+    @Autowired
+    private ClienteService clienteService;
 
     public Page<Fattura> findAll(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -27,17 +31,17 @@ public class FatturaService {
         newFattura.setImporto(dto.importo());
         newFattura.setNumeroFattura(dto.numeroFattura());
         newFattura.setStato(dto.stato());
+        newFattura.setCliente(clienteService.searchByPIva(dto.pIva()));
         return fatturaRepository.save(newFattura);
     }
 
     public Fattura findById(Long id) {
         return fatturaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fattura non trovata"));
+                .orElseThrow(() -> new NotFoundException("Fattura non trovata"));
     }
 
     public Fattura updateFattura(Long id, CreateFatturaDTO dto) {
-        Fattura fattura = fatturaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fattura non trovata"));
+        Fattura fattura = findById(id);
         fattura.setDataFattura(dto.dataFattura());
         fattura.setImporto(dto.importo());
         fattura.setNumeroFattura(dto.numeroFattura());

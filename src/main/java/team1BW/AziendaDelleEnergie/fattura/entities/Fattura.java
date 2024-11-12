@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
 import team1BW.AziendaDelleEnergie.fattura.enums.StatoFattura;
 
 import java.time.LocalDate;
@@ -28,4 +29,8 @@ public class Fattura {
 
     @Enumerated(EnumType.STRING)
     private StatoFattura stato;
+    @ManyToOne
+    private Cliente cliente;
+
+
 }
