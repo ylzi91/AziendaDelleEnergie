@@ -75,14 +75,17 @@ public class ClienteController {
 //----------------------------------Filtro---------------------------
 
     @GetMapping("/filterclients")
-    public List<Cliente> filtro(
+    public Page<Cliente> filtro(
             @RequestParam(required = false) Double fatturatoAnnuale,
             @RequestParam(required = false) String dataInserimento,
             @RequestParam(required = false) String dataUltimoContatto,
-            @RequestParam(required = false) String nomeCliente) {
+            @RequestParam(required = false) String nomeCliente,
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "ASC") String direction) {
         System.out.println("data ins: " + dataUltimoContatto);
 
-        return clienteService.filterClients(fatturatoAnnuale, dataInserimento, dataUltimoContatto,nomeCliente);
+        return clienteService.filterClients(fatturatoAnnuale, dataInserimento, dataUltimoContatto,nomeCliente, page, size, sortBy, direction);
     }
 }
 //    @GetMapping("/filterclients")

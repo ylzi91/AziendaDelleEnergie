@@ -94,6 +94,14 @@ public class ClienteService {
         return this.clienteRepository.findAll(pageable);
     }
 
+    public Page<Cliente> findAllClient(int page, int size, String sortBy, String direction, Specification specification) {
+        if (size > 100)
+            size = 100;
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return this.clienteRepository.findAll(specification, pageable);
+    }
+
     //------------------------------------findClientById-----------------------------------------
     public Cliente findClientById(Long clienteId) {
         return this.clienteRepository.findById(clienteId).orElseThrow(() -> new NotFoundException(clienteId));
@@ -156,15 +164,15 @@ public class ClienteService {
     }
 
     //------------------------------------filterClients------------------------------------------------
-    public List<Cliente> filterClients(Double fatturatoAnnuale,String dataInserimento,
-                                       String dataUltimoContatto, String nomeCliente) {
+    public Page<Cliente> filterClients(Double fatturatoAnnuale,String dataInserimento,
+                                       String dataUltimoContatto, String nomeCliente, int page, int size, String sortBy, String direction) {
 
-        List<Cliente> clienti = new ArrayList<>();
+        Page<Cliente> clienti;
 
         Specification<Cliente> specification = Specification.where(null);
 
         if(fatturatoAnnuale != null)
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("fatturatoAnnuale"), fatturatoAnnuale));
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("fatturatoAnnuale"), fatturatoAnnuale));
         if(dataInserimento != null)
             specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("dataInserimento"), LocalDate.parse(dataInserimento)));
         if(dataUltimoContatto != null)
@@ -172,8 +180,7 @@ public class ClienteService {
         if (nomeCliente != null)
             specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nomeCliente")), "%" + nomeCliente.toLowerCase() + "%"));
 
-        clienti = clienteRepository.findAll(specification);
-
+        clienti = this.findAllClient(page,size, sortBy, direction, specification);
 
         if (clienti.isEmpty()) {
             List<String> criterifiltro = new ArrayList<>();

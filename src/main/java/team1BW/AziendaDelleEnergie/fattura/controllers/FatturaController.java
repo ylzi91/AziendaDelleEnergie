@@ -6,8 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import team1BW.AziendaDelleEnergie.fattura.entities.Fattura;
+import team1BW.AziendaDelleEnergie.fattura.enums.StatoFattura;
 import team1BW.AziendaDelleEnergie.fattura.payloads.CreateFatturaDTO;
 import team1BW.AziendaDelleEnergie.fattura.services.FatturaService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/fatture")
@@ -45,5 +49,17 @@ public class FatturaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFattura(@PathVariable Long id) {
         fatturaService.deleteFattura(id);
+    }
+
+    @GetMapping("/filtro")
+    public List<Fattura> filtroFatture(
+            @RequestParam(required = false) Long clienteId,
+            @RequestParam(required = false) StatoFattura stato,
+            @RequestParam(required = false) LocalDate data,
+            @RequestParam(required = false) Integer anno,
+            @RequestParam(required = false) Double importoMin,
+            @RequestParam(required = false) Double importoMax
+    ) {
+        return fatturaService.filtroFatture(clienteId, stato, data, anno, importoMin, importoMax);
     }
 }
