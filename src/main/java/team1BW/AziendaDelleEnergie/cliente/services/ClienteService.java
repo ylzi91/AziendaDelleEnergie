@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
 import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.repositories.ClienteRepository;
@@ -18,6 +20,7 @@ import team1BW.AziendaDelleEnergie.indirizzi.services.IndirizzoService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -45,13 +48,37 @@ public class ClienteService {
             throw new BadRequestException("Email Contatto " + body.emailContatto() + " già in uso! Inserire un'altra email contatto!");
         });
 
-        NuovoIndirizzoDTO nuovoIndirizzoDTO = new NuovoIndirizzoDTO(body.via(), body.civico(), body.localita(), body.cap(), body.nomeComune());
+        NuovoIndirizzoDTO indirizzoLegale;
+        NuovoIndirizzoDTO indirizzoOperativo;
+        BindingResult validationResult;
+        if(body.via() == null || body.civico() == null || body.localita() == null || body.cap() == null || body.nomeComune() == null)
+            indirizzoLegale = null;
+        else
+            indirizzoLegale = new NuovoIndirizzoDTO(body.via(), body.civico(), body.localita(), body.cap(), body.nomeComune());
+
+        if(body.viaOp() == null || body.civicoOp() == null || body.localitaOp() == null || body.capOp() == null || body.nomeComuneOp() == null)
+            indirizzoOperativo = null;
+        else
+            indirizzoOperativo = new NuovoIndirizzoDTO(body.viaOp(), body.civicoOp(), body.localitaOp(), body.capOp(), body.nomeComuneOp());
+
         Cliente newCliente = new Cliente(
                 body.nomeCliente(),
-                body.ragioneSociale(), body.partitaIva(), body.email(), LocalDate.now(),
-                body.dataUltimoContatto(), body.fatturatoAnnuale(), body.pec(),
-                body.telefono(), body.emailContatto(), body.nomeContatto(), body.cognomeContatto(),
-                body.telefonoContatto(), body.logoAziendale(), body.tipoCliente(), indirizzoService.save(nuovoIndirizzoDTO)
+                body.ragioneSociale(),
+                body.partitaIva(),
+                body.email(),
+                LocalDate.now(),
+                body.dataUltimoContatto(),
+                body.fatturatoAnnuale(),
+                body.pec(),
+                body.telefono(),
+                body.emailContatto(),
+                body.nomeContatto(),
+                body.cognomeContatto(),
+                body.telefonoContatto(),
+                body.logoAziendale(),
+                body.tipoCliente(),
+                indirizzoLegale == null ? null : indirizzoService.save(indirizzoLegale),
+                indirizzoOperativo == null ? null : indirizzoService.save(indirizzoOperativo)
         );
         return this.clienteRepository.save(newCliente);
 
@@ -65,6 +92,14 @@ public class ClienteService {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         return this.clienteRepository.findAll(pageable);
+    }
+
+    public Page<Cliente> findAllClient(int page, int size, String sortBy, String direction, Specification specification) {
+        if (size > 100)
+            size = 100;
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return this.clienteRepository.findAll(specification, pageable);
     }
 
     //------------------------------------findClientById-----------------------------------------
@@ -129,15 +164,28 @@ public class ClienteService {
     }
 
     //------------------------------------filterClients------------------------------------------------
-    public List<Cliente> filterClients(Double fatturatoAnnuale, LocalDate dataInserimento,
-                                       LocalDate dataUltimoContatto, String nomeCliente) {
-        List<Cliente> clienti = clienteRepository.filtroClienti(
-                fatturatoAnnuale, dataInserimento, dataUltimoContatto, nomeCliente);
+    public Page<Cliente> filterClients(Double fatturatoAnnuale,String dataInserimento,
+                                       String dataUltimoContatto, String nomeCliente, int page, int size, String sortBy, String direction) {
+
+        Page<Cliente> clienti;
+
+        Specification<Cliente> specification = Specification.where(null);
+
+        if(fatturatoAnnuale != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("fatturatoAnnuale"), fatturatoAnnuale));
+        if(dataInserimento != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("dataInserimento"), LocalDate.parse(dataInserimento)));
+        if(dataUltimoContatto != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("dataUltimoContatto"), LocalDate.parse(dataUltimoContatto)));
+        if (nomeCliente != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nomeCliente")), "%" + nomeCliente.toLowerCase() + "%"));
+
+        clienti = this.findAllClient(page,size, sortBy, direction, specification);
 
         if (clienti.isEmpty()) {
             List<String> criterifiltro = new ArrayList<>();
+            if(dataInserimento != null) criterifiltro.add("data di inserimento: " + dataInserimento);
             if (fatturatoAnnuale != null) criterifiltro.add("fatturato annuale: " + fatturatoAnnuale);
-            if (dataInserimento != null) criterifiltro.add("data di inserimento: " + dataInserimento);
             if (dataUltimoContatto != null) criterifiltro.add("data dell'ultimo contatto: " + dataUltimoContatto);
             if (nomeCliente != null) criterifiltro.add("nome cliente: '" + nomeCliente + "'");
 
@@ -151,6 +199,14 @@ public class ClienteService {
     public Cliente searchByPIva(String pIva){
         Cliente found = clienteRepository.findByPartitaIva(pIva).orElseThrow(() -> new NotFoundException("Paritita iva numero: " + pIva + " non trovata"));
         return found;
+    }
+
+    public List<Cliente> filterFromDataIns(String dataIns){
+        return clienteRepository.findBydataInserimento(LocalDate.parse(dataIns));
+    }
+
+    public List<Cliente> filterFromDataUltimoContatto(String dataCont){
+        return clienteRepository.findBydataUltimoContatto(LocalDate.parse(dataCont));
     }
 
 }
