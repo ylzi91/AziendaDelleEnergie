@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import team1BW.AziendaDelleEnergie.cliente.entities.Cliente;
@@ -19,6 +20,7 @@ import team1BW.AziendaDelleEnergie.indirizzi.services.IndirizzoService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -154,15 +156,29 @@ public class ClienteService {
     }
 
     //------------------------------------filterClients------------------------------------------------
-    public List<Cliente> filterClients(Double fatturatoAnnuale, LocalDate dataInserimento,
-                                       LocalDate dataUltimoContatto, String nomeCliente) {
-        List<Cliente> clienti = clienteRepository.filtroClienti(
-                fatturatoAnnuale, dataInserimento, dataUltimoContatto, nomeCliente);
+    public List<Cliente> filterClients(Double fatturatoAnnuale,String dataInserimento,
+                                       String dataUltimoContatto, String nomeCliente) {
+
+        List<Cliente> clienti = new ArrayList<>();
+
+        Specification<Cliente> specification = Specification.where(null);
+
+        if(fatturatoAnnuale != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("fatturatoAnnuale"), fatturatoAnnuale));
+        if(dataInserimento != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("dataInserimento"), LocalDate.parse(dataInserimento)));
+        if(dataUltimoContatto != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("dataUltimoContatto"), LocalDate.parse(dataUltimoContatto)));
+        if (nomeCliente != null)
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nomeCliente")), "%" + nomeCliente.toLowerCase() + "%"));
+
+        clienti = clienteRepository.findAll(specification);
+
 
         if (clienti.isEmpty()) {
             List<String> criterifiltro = new ArrayList<>();
+            if(dataInserimento != null) criterifiltro.add("data di inserimento: " + dataInserimento);
             if (fatturatoAnnuale != null) criterifiltro.add("fatturato annuale: " + fatturatoAnnuale);
-            if (dataInserimento != null) criterifiltro.add("data di inserimento: " + dataInserimento);
             if (dataUltimoContatto != null) criterifiltro.add("data dell'ultimo contatto: " + dataUltimoContatto);
             if (nomeCliente != null) criterifiltro.add("nome cliente: '" + nomeCliente + "'");
 
@@ -176,6 +192,14 @@ public class ClienteService {
     public Cliente searchByPIva(String pIva){
         Cliente found = clienteRepository.findByPartitaIva(pIva).orElseThrow(() -> new NotFoundException("Paritita iva numero: " + pIva + " non trovata"));
         return found;
+    }
+
+    public List<Cliente> filterFromDataIns(String dataIns){
+        return clienteRepository.findBydataInserimento(LocalDate.parse(dataIns));
+    }
+
+    public List<Cliente> filterFromDataUltimoContatto(String dataCont){
+        return clienteRepository.findBydataUltimoContatto(LocalDate.parse(dataCont));
     }
 
 }
