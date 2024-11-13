@@ -14,7 +14,11 @@ import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clienti")
@@ -27,7 +31,11 @@ public class ClienteController {
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente saveCliente(@Valid @RequestBody NewClienteDTO newClienteDTO) {
+    public Cliente saveCliente(@RequestBody @Validated NewClienteDTO newClienteDTO, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            String message = validationResult.getAllErrors().stream().map(objectError -> objectError.getDefaultMessage()).collect(Collectors.joining(". "));
+            throw new BadRequestException(message);
+        }
         return clienteService.saveClient(newClienteDTO);
     }
 
@@ -66,14 +74,23 @@ public class ClienteController {
 
 //----------------------------------Filtro---------------------------
 
-    @GetMapping("filterclients")
+    @GetMapping("/filterclients")
     public List<Cliente> filtro(
             @RequestParam(required = false) Double fatturatoAnnuale,
-            @RequestParam(required = false) LocalDate dataInserimento,
-            @RequestParam(required = false) LocalDate dataUltimoContatto,
+            @RequestParam(required = false) String dataInserimento,
+            @RequestParam(required = false) String dataUltimoContatto,
             @RequestParam(required = false) String nomeCliente) {
-        return clienteService.filterClients(fatturatoAnnuale, dataInserimento, dataUltimoContatto, nomeCliente);
+        System.out.println("data ins: " + dataUltimoContatto);
+
+        return clienteService.filterClients(fatturatoAnnuale, dataInserimento, dataUltimoContatto,nomeCliente);
     }
-
-
 }
+//    @GetMapping("/filterclients")
+//    public List<Cliente> filtroDatains(@RequestParam(required = false) String dataInserimento) {
+//
+//        return clienteService.filterFromDataIns(dataInserimento);
+//
+//
+
+
+
