@@ -91,8 +91,12 @@ public class UtenteService {
     }
 
     //------------------------------------------delete utente ------------------------
-    public void findByIdAndDelete(Long utenteId) {
+    public void findByIdAndDelete(Long utenteId, Utente utente) {
         Utente foundUtente = this.findById(utenteId);
+        if (utente.getId().equals(utenteId) &&
+                utente.getRuoli().stream().anyMatch(ruolo -> ruolo.getNome().equals("ADMIN"))) {
+            throw new UnsupportedOperationException("Gli utenti ADMIN non possono cancellare il proprio profilo.");
+        }
         this.utenteRepository.delete(foundUtente);
     }
 
@@ -112,9 +116,9 @@ public class UtenteService {
     }
 
     //-----------------------------------Delete ruolo -------------------------------
-    public Utente deleteRuolo(Long utenteId, Long ruoloId) {
+    public Utente deleteRuolo(Long utenteId, String nomeRuolo) {
         Utente utente = this.findById(utenteId);
-        Ruolo ruolo = ruoloRepository.findById(ruoloId).orElseThrow(() ->
+        Ruolo ruolo = ruoloRepository.findByNome(nomeRuolo).orElseThrow(() ->
                 new NotFoundException("Il ruolo non e stato trovato!"));
         utente.getRuoli().remove(ruolo);
         return utenteRepository.save(utente);

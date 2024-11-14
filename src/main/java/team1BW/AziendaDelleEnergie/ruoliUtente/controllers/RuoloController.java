@@ -25,15 +25,16 @@ public class RuoloController {
         return ruoloService.creaRuolo(ruolo);
     }
 
-    @PostMapping("/addRuolo")
+    @PostMapping("/addRuolo/{utenteId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Utente addRuolo(@RequestParam Long utenteId, @RequestBody @Validated Ruolo ruolo) {
+    public Utente addRuolo(@PathVariable Long utenteId, @RequestBody @Validated Ruolo ruolo) {
         return utenteService.addRuolo(utenteId, ruolo);
     }
 
-    @DeleteMapping("/deleteRuolo")
+    @DeleteMapping("/deleteRuolo/{utenteId}/{nomeRuolo}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Utente deleteRuolo(@RequestParam Long utenteId, @RequestParam Long ruoloId) {
-        return utenteService.deleteRuolo(utenteId, ruoloId);
+    public Utente deleteRuolo(@PathVariable Long utenteId, @PathVariable String nomeRuolo) {
+        return utenteService.deleteRuolo(utenteId, nomeRuolo);
     }
+
 }
