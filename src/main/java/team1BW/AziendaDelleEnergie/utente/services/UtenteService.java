@@ -1,6 +1,7 @@
 package team1BW.AziendaDelleEnergie.utente.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,10 +11,12 @@ import org.springframework.stereotype.Service;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 import team1BW.AziendaDelleEnergie.ruoliUtente.entities.Ruolo;
-import team1BW.AziendaDelleEnergie.ruoliUtente.repositories.RuoloRepository;
+import team1BW.AziendaDelleEnergie.ruoliUtente.services.RuoloService;
 import team1BW.AziendaDelleEnergie.utente.entities.Utente;
 import team1BW.AziendaDelleEnergie.utente.payloads.UtenteDTO;
 import team1BW.AziendaDelleEnergie.utente.repositories.UtenteRepository;
+
+import java.util.List;
 
 @Service
 public class UtenteService {
@@ -25,9 +28,10 @@ public class UtenteService {
     private PasswordEncoder bcrypt;
 
     @Autowired
-    private RuoloRepository ruoloRepository;
+    @Lazy
+    private RuoloService ruoloService;
 
-    //-------------------------------------save utente -----------------------------------
+    //-------------------------------------save new utente -----------------------------------
     public Utente saveUtente(UtenteDTO body) {
         this.utenteRepository.findByEmail(body.email()).ifPresent(
                 utente -> {
@@ -38,8 +42,7 @@ public class UtenteService {
         this.utenteRepository.findByUsername(body.username()).ifPresent(utente -> {
             throw new BadRequestException("Username " + body.username() + " già in uso!");
         });
-        Ruolo ruoloUtente = ruoloRepository.findByNome("USER")
-                .orElseThrow(() -> new NotFoundException("Il ruolo 'USER' non e stato trovato!"));
+        Ruolo ruoloUtente = ruoloService.cercaRuoloPerNome("USER");
 
         Utente newUtente = new Utente(body.nome(), body.cognome(), body.username(), body.email(),
                 bcrypt.encode(body.password()),
@@ -109,8 +112,7 @@ public class UtenteService {
     //----------------------------------- AddRuoloUtente ---------------------------------
     public Utente addRuolo(Long utenteId, Ruolo ruolo) {
         Utente utente = findById(utenteId);
-        Ruolo existRuolo = ruoloRepository.findByNome(ruolo.getNome())
-                .orElseThrow(() -> new NotFoundException("Il ruolo non è stato trovato!"));
+        Ruolo existRuolo = ruoloService.cercaRuoloPerNome(ruolo.getNome());
         utente.getRuoli().add(existRuolo);
         return utenteRepository.save(utente);
     }
@@ -118,9 +120,19 @@ public class UtenteService {
     //-----------------------------------Delete ruolo -------------------------------
     public Utente deleteRuolo(Long utenteId, String nomeRuolo) {
         Utente utente = this.findById(utenteId);
-        Ruolo ruolo = ruoloRepository.findByNome(nomeRuolo).orElseThrow(() ->
-                new NotFoundException("Il ruolo non e stato trovato!"));
+        Ruolo ruolo = ruoloService.cercaRuoloPerNome(nomeRuolo);
         utente.getRuoli().remove(ruolo);
+        return utenteRepository.save(utente);
+    }
+
+    //--------------------------------- Find ruoli utenti ----------------
+    public List<Utente> findAllByRuoliUtente(Ruolo ruolo) {
+        return utenteRepository.findAllByRuoliContains(ruolo);
+    }
+
+    //---------------------------------Save utente per i ruoli --------------
+
+    public Utente saveUR(Utente utente) {
         return utenteRepository.save(utente);
     }
 }

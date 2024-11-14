@@ -25,6 +25,13 @@ public class UtenteController {
         return this.utenteService.findAll(page, size, sortBy);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Utente getUtenteById(@PathVariable Long id) {
+        return utenteService.findById(id);
+    }
+
+
     @GetMapping("/me")
     public Utente getProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
         return currentAuthenticatedUser;

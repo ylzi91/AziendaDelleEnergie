@@ -34,7 +34,7 @@ public class Utente implements UserDetails {
     private String password;
     private String avatar;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "ruoli_utente",
             joinColumns = @JoinColumn(name = "utente_id"),
