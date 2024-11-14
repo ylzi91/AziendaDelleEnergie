@@ -19,6 +19,7 @@ public class UtenteController {
     @Autowired
     private UtenteService utenteService;
 
+    // Trova tutti gli utenti con paginazione
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<Utente> findAll(@RequestParam(defaultValue = "0") int page,
@@ -27,12 +28,12 @@ public class UtenteController {
         return this.utenteService.findAll(page, size, sortBy);
     }
 
+    // Trova un utente specifico per ID
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Utente getUtenteById(@PathVariable Long id) {
         return utenteService.findById(id);
     }
-
 
     @GetMapping("/me")
     public Utente getProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
@@ -46,8 +47,8 @@ public class UtenteController {
 
     @DeleteMapping("/me")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProfile(@AuthenticationPrincipal Utente utente) {
-        utenteService.findByIdAndDelete(utente.getId(), utente);
+    public void deleteProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
+        utenteService.findByIdAndDelete(currentAuthenticatedUser.getId());
     }
 
     @DeleteMapping("/{id}")
@@ -56,7 +57,6 @@ public class UtenteController {
     public void deleteUserById(@PathVariable Long id) {
         utenteService.findByIdAndDelete(id);
     }
-
 
     @PatchMapping("/me/avatar")
     @ResponseStatus(HttpStatus.OK)
