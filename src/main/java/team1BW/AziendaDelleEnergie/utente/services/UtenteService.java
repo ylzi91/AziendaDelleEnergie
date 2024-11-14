@@ -12,6 +12,9 @@ import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 import team1BW.AziendaDelleEnergie.utente.entities.Utente;
 import team1BW.AziendaDelleEnergie.utente.payloads.UtenteDTO;
 import team1BW.AziendaDelleEnergie.utente.repositories.UtenteRepository;
+import team1BW.AziendaDelleEnergie.utente.tools.MailgunSender;
+
+import java.util.Optional;
 
 @Service
 public class UtenteService {
@@ -21,6 +24,9 @@ public class UtenteService {
 
     @Autowired
     private PasswordEncoder bcrypt;
+
+    @Autowired
+    private MailgunSender mailgunSender;
 
     //-------------------------------------save utente -----------------------------------
     public Utente saveUtente(UtenteDTO body) {
@@ -33,10 +39,17 @@ public class UtenteService {
         this.utenteRepository.findByUsername(body.username()).ifPresent(utente -> {
             throw new BadRequestException("Username " + body.username() + " già in uso!");
         });
-        Utente newUtente = new Utente(body.nome(), body.cognome(), body.username(), body.email(), bcrypt.encode(body.password()),
-                "https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome());
-        return this.utenteRepository.save(newUtente);
 
+        Utente newUtente = new Utente(body.nome(), body.cognome(), body.username(), body.email(),
+                bcrypt.encode(body.password()),
+                "https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome());
+
+        Utente savedUser = this.utenteRepository.save(newUtente);
+
+        
+        mailgunSender.sendRegistrationEmail(savedUser);
+
+        return savedUser;
     }
 
     //-----------------------------------------find all utenti ---------------------------------
@@ -90,5 +103,9 @@ public class UtenteService {
     public Utente findByUsername(String username) {
         return this.utenteRepository.findByUsername(username).orElseThrow(() ->
                 new NotFoundException("L'utente con lo username: " + username + " non è stato trovato"));
+    }
+
+    public Optional<Utente> findByEmail(String email) {
+        return this.utenteRepository.findByEmail(email);
     }
 }

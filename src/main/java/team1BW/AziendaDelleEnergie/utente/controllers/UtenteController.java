@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import team1BW.AziendaDelleEnergie.utente.entities.Utente;
 import team1BW.AziendaDelleEnergie.utente.payloads.UtenteDTO;
@@ -41,5 +39,12 @@ public class UtenteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
         this.utenteService.findByIdAndDelete(currentAuthenticatedUser.getId());
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUserById(@PathVariable Long id) {
+        utenteService.findByIdAndDelete(id);
     }
 }
