@@ -1,6 +1,5 @@
 package team1BW.AziendaDelleEnergie.cliente.controllers;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -13,11 +12,6 @@ import team1BW.AziendaDelleEnergie.cliente.payloads.NewClienteDTO;
 import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
 import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -85,15 +79,10 @@ public class ClienteController {
             @RequestParam(defaultValue = "ASC") String direction) {
         System.out.println("data ins: " + dataUltimoContatto);
 
-        return clienteService.filterClients(fatturatoAnnuale, dataInserimento, dataUltimoContatto,nomeCliente, page, size, sortBy, direction);
+        return clienteService.filterClients(fatturatoAnnuale, dataInserimento, dataUltimoContatto, nomeCliente, page, size, sortBy, direction);
     }
 }
-//    @GetMapping("/filterclients")
-//    public List<Cliente> filtroDatains(@RequestParam(required = false) String dataInserimento) {
-//
-//        return clienteService.filterFromDataIns(dataInserimento);
-//
-//
+
 
 
 

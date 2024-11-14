@@ -6,12 +6,12 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import team1BW.AziendaDelleEnergie.utente.enums.Ruolo;
+import team1BW.AziendaDelleEnergie.ruoliUtente.entities.Ruolo;
 
 import java.util.Collection;
-import java.util.List;
-
-import static team1BW.AziendaDelleEnergie.utente.enums.Ruolo.USER;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -33,8 +33,14 @@ public class Utente implements UserDetails {
     private String email;
     private String password;
     private String avatar;
-    @Enumerated(EnumType.STRING)
-    private Ruolo ruolo;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "ruoli_utente",
+            joinColumns = @JoinColumn(name = "utente_id"),
+            inverseJoinColumns = @JoinColumn(name = "ruoli_id")
+    )
+    private Set<Ruolo> ruoli = new HashSet<>();
 
     public Utente(String nomeUtente, String cognomeUtente, String username,
                   String email, String password, String avatar) {
@@ -44,13 +50,12 @@ public class Utente implements UserDetails {
         this.email = email;
         this.password = password;
         this.avatar = avatar;
-        this.ruolo = USER;
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.ruolo.name()));
+        return ruoli.stream().map(ruolo -> new SimpleGrantedAuthority(ruolo.getNome())).collect(Collectors.toList());
     }
 
 }
