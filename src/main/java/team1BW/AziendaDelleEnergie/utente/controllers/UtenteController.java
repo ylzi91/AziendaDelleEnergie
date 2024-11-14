@@ -27,6 +27,13 @@ public class UtenteController {
         return this.utenteService.findAll(page, size, sortBy);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Utente getUtenteById(@PathVariable Long id) {
+        return utenteService.findById(id);
+    }
+
+
     @GetMapping("/me")
     public Utente getProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
         return currentAuthenticatedUser;
@@ -39,8 +46,8 @@ public class UtenteController {
 
     @DeleteMapping("/me")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProfile(@AuthenticationPrincipal Utente currentAuthenticatedUser) {
-        this.utenteService.findByIdAndDelete(currentAuthenticatedUser.getId());
+    public void deleteProfile(@AuthenticationPrincipal Utente utente) {
+        utenteService.findByIdAndDelete(utente.getId(), utente);
     }
 
     @DeleteMapping("/{id}")

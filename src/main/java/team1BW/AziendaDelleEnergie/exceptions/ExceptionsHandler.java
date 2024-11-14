@@ -31,23 +31,31 @@ public class ExceptionsHandler {
         return new ErrorsResponseDTO("Non hai i permessi per accedere", LocalDateTime.now());
     }
 
+    @ExceptionHandler(UnsupportedOperationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorsResponseDTO handleUnsupportedOperationException(UnsupportedOperationException ex) {
+        return new ErrorsResponseDTO(ex.getMessage(), LocalDateTime.now());
+    }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorsResponseDTO handleNotFound(NotFoundException ex) {
         return new ErrorsResponseDTO(ex.getMessage(), LocalDateTime.now());
     }
 
+
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorsResponseDTO handleGeneric(Exception ex) {
         ex.printStackTrace();
         return new ErrorsResponseDTO("Problema lato server!", LocalDateTime.now());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST) // 500
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorsResponseDTO handleGeneric(DataIntegrityViolationException ex) {
         ex.printStackTrace();
         return new ErrorsResponseDTO(ex.getMessage(), LocalDateTime.now());
     }
+
 }
