@@ -9,6 +9,7 @@ import team1BW.AziendaDelleEnergie.fattura.enums.StatoFattura;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FatturaRepository extends JpaRepository<Fattura, Long> {
@@ -28,4 +29,7 @@ public interface FatturaRepository extends JpaRepository<Fattura, Long> {
             @Param("importoMin") Double importoMin,
             @Param("importoMax") Double importoMax
     );
+
+
+    Optional<Fattura> findByNumeroFattura(Long numeroFattura);
 }

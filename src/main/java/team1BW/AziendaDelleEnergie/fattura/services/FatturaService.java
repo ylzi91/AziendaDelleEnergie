@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import team1BW.AziendaDelleEnergie.cliente.services.ClienteService;
+import team1BW.AziendaDelleEnergie.exceptions.BadRequestException;
 import team1BW.AziendaDelleEnergie.exceptions.NotFoundException;
 import team1BW.AziendaDelleEnergie.fattura.entities.Fattura;
 import team1BW.AziendaDelleEnergie.fattura.enums.StatoFattura;
@@ -30,13 +31,16 @@ public class FatturaService {
         return fatturaRepository.findAll(pageable);
     }
 
-    public Fattura createFattura(CreateFatturaDTO dto) {
+    public Fattura createFattura(CreateFatturaDTO body) {
+        fatturaRepository.findByNumeroFattura(body.numeroFattura()).ifPresent(existingFattura -> {
+            throw new BadRequestException("Numero fattura " + body.numeroFattura() + " già in uso!");
+        });
         Fattura newFattura = new Fattura();
-        newFattura.setDataFattura(dto.dataFattura());
-        newFattura.setImporto(dto.importo());
-        newFattura.setNumeroFattura(dto.numeroFattura());
-        newFattura.setStato(dto.stato());
-        newFattura.setCliente(clienteService.searchByPIva(dto.pIva()));
+        newFattura.setDataFattura(body.dataFattura());
+        newFattura.setImporto(body.importo());
+
+        newFattura.setStato(body.stato());
+        newFattura.setCliente(clienteService.searchByPIva(body.pIva()));
         return fatturaRepository.save(newFattura);
     }
 

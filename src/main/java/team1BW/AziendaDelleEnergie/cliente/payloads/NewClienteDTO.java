@@ -2,7 +2,6 @@ package team1BW.AziendaDelleEnergie.cliente.payloads;
 
 import jakarta.validation.constraints.*;
 import team1BW.AziendaDelleEnergie.cliente.enums.TipoCliente;
-import team1BW.AziendaDelleEnergie.indirizzi.entities.Indirizzo;
 
 import java.time.LocalDate;
 
@@ -58,7 +57,7 @@ public record NewClienteDTO(
         @NotEmpty(message = "La via è obbligatoria")
         String via,
 
-        @NotEmpty(message = "Il cap è obbligatorio")
+        @NotNull(message = "Il cap è obbligatorio")
         Integer cap,
 
         @NotEmpty(message = "Il civico è obbligatorio")

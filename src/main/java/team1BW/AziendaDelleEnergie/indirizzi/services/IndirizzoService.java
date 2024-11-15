@@ -1,5 +1,6 @@
 package team1BW.AziendaDelleEnergie.indirizzi.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -55,6 +56,7 @@ public class IndirizzoService {
     }
 
     // FIND AND DELETE
+    @Transactional
     public void findByIdAndDelete(Long indirizzoId) {
         Indirizzo found = this.findById(indirizzoId);
         this.indirizzoRepository.delete(found);
